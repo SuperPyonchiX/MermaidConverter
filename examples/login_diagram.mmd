@@ -1,0 +1,14 @@
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI
+    participant Auth
+    participant DB
+    
+    User->>UI: ログイン
+    UI->>+Auth: 認証リクエスト
+    Auth->>+DB: ユーザー情報取得
+    DB-->>-Auth: ユーザーデータ
+    Auth-->>-UI: 認証結果
+    UI->>User: ダッシュボード表示
+```

@@ -1,0 +1,10 @@
+# 参考文書
+- [Next Design エクステンション開発マニュアル](https://docs.nextdesign.app/extension/)
+- [Next Design エクステンション API リファレンス](https://docs.nextdesign.app/extension/api/intro)
+- [Next Design エクステンション開発ガイド - スクリプトで開発 - ファイルの準備](https://docs.nextdesign.app/extension/docs/getting-started/dev-with-scripts/manifest)
+- [Next Design エクステンション開発ガイド - スクリプトで開発 - 拡張ポイントの定義](https://docs.nextdesign.app/extension/docs/getting-started/dev-with-scripts/extension-points)
+- [Next Design エクステンション開発ガイド - スクリプトで開発 - スクリプトによるハンドラの実装](https://docs.nextdesign.app/extension/docs/getting-started/dev-with-scripts/impl-handlers)
+- [Next Design エクステンション開発ガイド - スクリプトで開発 - グローバルオブジェクト](https://docs.nextdesign.app/extension/docs/getting-started/dev-with-scripts/global-objects)
+- [Next Design エクステンション開発ガイド - スクリプトで開発 - 実行とデバッグ](https://docs.nextdesign.app/extension/docs/getting-started/dev-with-scripts/debugging)
+- [Next Design エクステンション開発ガイド - スクリプトで開発 - スクリプトエディタでの実行](https://docs.nextdesign.app/extension/docs/getting-started/dev-with-scripts/run-with-script-editor)
+- [Next Design エクステンション開発ガイド - スクリプトで開発 - エクステンションの配布](https://docs.nextdesign.app/extension/docs/getting-started/dev-with-scripts/deployment)

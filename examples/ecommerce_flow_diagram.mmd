@@ -1,0 +1,39 @@
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI
+    participant AuthService
+    participant Database
+    participant EmailService
+    
+    User->>UI: ログインページにアクセス
+    UI->>User: ログインフォーム表示
+    User->>UI: 資格情報を入力
+    UI->>AuthService: 認証リクエスト
+    AuthService->>Database: ユーザー情報クエリ
+    Database->>AuthService: ユーザーレコード
+    AuthService->>AuthService: パスワード検証
+    AuthService->>UI: 認証成功
+    UI->>User: ダッシュボード表示
+    
+    User->>UI: 商品一覧を表示
+    UI->>Database: 商品データクエリ
+    Database->>UI: 商品リスト
+    UI->>User: 商品一覧表示
+    
+    User->>UI: 商品をカートに追加
+    UI->>Database: カート更新
+    Database->>UI: 更新完了
+    
+    User->>UI: チェックアウト開始
+    UI->>AuthService: セッション検証
+    AuthService->>UI: 検証OK
+    UI->>User: 注文確認ページ
+    
+    User->>UI: 注文確定
+    UI->>Database: 注文作成
+    Database->>UI: 注文ID
+    UI->>EmailService: 注文確認メール送信
+    EmailService->>User: メール送信
+    UI->>User: 注文完了ページ
+```
