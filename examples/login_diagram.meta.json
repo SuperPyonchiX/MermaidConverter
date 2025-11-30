@@ -1,90 +1,99 @@
 {
-  "version": "1.0",
   "diagram": {
-    "id": "login-seq-001",
-    "name": "Login Sequence",
-    "description": "ユーザーログインフロー"
+    "id": "example-login-001",
+    "name": "ログインシーケンス図",
+    "description": "ユーザー認証フローを示すシーケンス図"
   },
   "lifelines": [
     {
+      "id": "lifeline-001",
+      "name": "User",
       "mermaidId": "User",
-      "nextDesignId": "ll-user-001",
-      "name": "ユーザー",
-      "type": "Actor",
+      "order": 0
+    },
+    {
+      "id": "lifeline-002",
+      "name": "UI",
+      "mermaidId": "UI",
       "order": 1
     },
     {
-      "mermaidId": "UI",
-      "nextDesignId": "ll-ui-001",
-      "name": "UI",
-      "type": "Participant",
+      "id": "lifeline-003",
+      "name": "AuthServer",
+      "mermaidId": "AuthServer",
       "order": 2
     },
     {
-      "mermaidId": "Auth",
-      "nextDesignId": "ll-auth-001",
-      "name": "Auth",
-      "type": "Participant",
+      "id": "lifeline-004",
+      "name": "Database",
+      "mermaidId": "Database",
       "order": 3
-    },
-    {
-      "mermaidId": "DB",
-      "nextDesignId": "ll-db-001",
-      "name": "DB",
-      "type": "Participant",
-      "order": 4
     }
   ],
   "messages": [
     {
-      "mermaidSourceId": "User",
-      "mermaidTargetId": "UI",
-      "nextDesignId": "msg-001",
-      "name": "ログイン",
-      "messageSort": "Synchronous",
+      "id": "message-001",
+      "name": "ログイン要求",
+      "sender": "User",
+      "receiver": "UI",
+      "kind": "sync",
+      "order": 0
+    },
+    {
+      "id": "message-002",
+      "name": "認証リクエスト",
+      "sender": "UI",
+      "receiver": "AuthServer",
+      "kind": "sync",
       "order": 1
     },
     {
-      "mermaidSourceId": "UI",
-      "mermaidTargetId": "Auth",
-      "nextDesignId": "msg-002",
-      "name": "認証リクエスト",
-      "messageSort": "Synchronous",
+      "id": "message-003",
+      "name": "ユーザー情報取得",
+      "sender": "AuthServer",
+      "receiver": "Database",
+      "kind": "sync",
       "order": 2
     },
     {
-      "mermaidSourceId": "Auth",
-      "mermaidTargetId": "DB",
-      "nextDesignId": "msg-003",
-      "name": "ユーザー情報取得",
-      "messageSort": "Synchronous",
+      "id": "message-004",
+      "name": "ユーザー情報",
+      "sender": "Database",
+      "receiver": "AuthServer",
+      "kind": "reply",
       "order": 3
     },
     {
-      "mermaidSourceId": "DB",
-      "mermaidTargetId": "Auth",
-      "nextDesignId": "msg-004",
-      "name": "ユーザーデータ",
-      "messageSort": "Return",
+      "id": "message-005",
+      "name": "トークン",
+      "sender": "AuthServer",
+      "receiver": "UI",
+      "kind": "reply",
       "order": 4
     },
     {
-      "mermaidSourceId": "Auth",
-      "mermaidTargetId": "UI",
-      "nextDesignId": "msg-005",
-      "name": "認証結果",
-      "messageSort": "Return",
+      "id": "message-006",
+      "name": "ログイン成功",
+      "sender": "UI",
+      "receiver": "User",
+      "kind": "reply",
       "order": 5
     },
     {
-      "mermaidSourceId": "UI",
-      "mermaidTargetId": "User",
-      "nextDesignId": "msg-006",
-      "name": "ダッシュボード表示",
-      "messageSort": "Synchronous",
+      "id": "message-007",
+      "name": "エラー",
+      "sender": "AuthServer",
+      "receiver": "UI",
+      "kind": "reply",
       "order": 6
+    },
+    {
+      "id": "message-008",
+      "name": "ログイン失敗",
+      "sender": "UI",
+      "receiver": "User",
+      "kind": "reply",
+      "order": 7
     }
-  ],
-  "fragments": [],
-  "unsupportedElements": []
+  ]
 }

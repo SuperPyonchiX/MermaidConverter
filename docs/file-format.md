@@ -1,414 +1,557 @@
 # ファイル形式仕様
 
-NextDesign Mermaid Converter で使用されるファイル形式の詳細仕様です。
+NextDesign Mermaid Converterで使用されるファイル形式の仕様を説明します。
 
-## ファイル命名規則
+## 目次
 
-### Mermaid ファイル
+1. [Mermaidファイル (.mmd)](#mermaidファイル-mmd)
+2. [メタデータファイル (.meta.json)](#メタデータファイル-metajson)
+3. [サポートするMermaid構文](#サポートするmermaid構文)
+4. [拡張可能性](#拡張可能性)
 
-- 形式: `{SequenceName}_diagram.mmd`
-- 文字コード: UTF-8
-- 改行コード: LF または CRLF
-
-例:
-- `login_diagram.mmd`
-- `checkout_flow_diagram.mmd`
-
-### メタデータファイル
-
-- 形式: `{SequenceName}_diagram.meta.json`
-- Mermaid ファイルと同じベース名
-- 文字コード: UTF-8
-
-例:
-- `login_diagram.meta.json`
-- `checkout_flow_diagram.meta.json`
-
-## Mermaid 構文
-
-サポートされる Mermaid シーケンス図の構文:
+## Mermaidファイル (.mmd)
 
 ### 基本構造
 
-エクスポートされる `.mmd` ファイルは、Markdown対応エディタ（GitHub、VS Code等）で即座にプレビューできるよう、Mermaidコードブロックで囲まれています:
-
 ```mermaid
 sequenceDiagram
-    [ライフライン定義]
-    [メッセージ定義]
-    [フラグメント定義]
-    [ノート定義]
-```
-
-**インポート時**: Phase 5 実装では、コードブロック（` ```mermaid ` と ` ``` `）は自動的に除去され、本体のみがパースされます。
-
-### ライフライン定義
-
-#### participant (通常のライフライン)
-
-```mermaid
-participant LifelineId
-participant LifelineId as 表示名
-```
-
-例:
-```mermaid
-participant User
-participant UI as ユーザーインターフェース
-```
-
-#### actor (アクター) - Phase 4+
-
-```mermaid
-actor ActorId
-actor ActorId as 表示名
-```
-
-例:
-```mermaid
-actor User
-actor Admin as 管理者
-```
-
-### メッセージ定義
-
-#### 同期メッセージ
-
-```mermaid
-Source->>Target: メッセージ名
-```
-
-#### 非同期メッセージ - Phase 4+
-
-```mermaid
-Source-->>Target: メッセージ名
-```
-
-#### 戻りメッセージ - Phase 4+
-
-```mermaid
-Source-->>Target: メッセージ名
-Source--)Target: メッセージ名
-```
-
-#### Create/Destroy - Phase 4+
-
-```mermaid
-Source->>+Target: Create
-Source->>xTarget: Destroy
-```
-
-### アクティベーション - Phase 4+
-
-```mermaid
-Source->>+Target: メッセージ（アクティベーション開始）
-Source->>-Target: メッセージ（アクティベーション終了）
-```
-
-### フラグメント - Phase 4+
-
-#### alt (条件分岐)
-
-```mermaid
-alt 条件1
-    A->>B: メッセージ1
-else 条件2
-    A->>C: メッセージ2
-end
-```
-
-#### loop (繰り返し)
-
-```mermaid
-loop 繰り返し条件
+    participant A
+    participant B
+    
     A->>B: メッセージ
-end
+    B-->>A: 応答
 ```
 
-#### opt (オプショナル)
+### エンコーディング
 
-```mermaid
-opt 条件
-    A->>B: メッセージ
-end
+- **文字エンコーディング**: UTF-8 (BOM なし)
+- **改行コード**: LF または CRLF (どちらでも可)
+- **インデント**: スペース4つ推奨
+
+### ヘッダー
+
+必須:
+```
+sequenceDiagram
 ```
 
-#### par (並行)
+これがファイルの最初の行に必要です。
 
-```mermaid
-par 並行処理1
-    A->>B: メッセージ1
-and 並行処理2
-    A->>C: メッセージ2
-end
+### コメント
+
+Mermaidのコメント構文:
+```
+%% これはコメントです
 ```
 
-### ノート - Phase 4+
+## メタデータファイル (.meta.json)
 
-```mermaid
-Note left of Lifeline: ノート内容
-Note right of Lifeline: ノート内容
-Note over Lifeline1,Lifeline2: ノート内容
-```
+### 概要
 
-## メタデータ JSON 形式
+NextDesign固有の情報を保存するJSONファイル。
 
-### ルート構造
+### 命名規則
+
+Mermaidファイル名に基づく:
+- Mermaidファイル: `example.mmd`
+- メタデータファイル: `example.meta.json`
+
+### 基本構造
 
 ```json
 {
-  "version": "1.0",
+  "diagram": {
+    "id": "string",
+    "name": "string",
+    "description": "string",
+    "customData": {}
+  },
+  "lifelines": [
+    {
+      "id": "string",
+      "name": "string",
+      "mermaidId": "string",
+      "order": "number",
+      "typeModel": "string",
+      "customData": {}
+    }
+  ],
+  "messages": [
+    {
+      "id": "string",
+      "name": "string",
+      "sender": "string",
+      "receiver": "string",
+      "messageSort": "string",
+      "order": "number",
+      "customData": {}
+    }
+  ],
+  "fragments": [
+    {
+      "id": "string",
+      "type": "string",
+      "condition": "string",
+      "operands": [],
+      "customData": {}
+    }
+  ]
+}
+```
+
+### フィールド仕様
+
+#### diagram (ダイアグラム情報)
+
+| フィールド | 型 | 必須 | 説明 |
+|-----------|-----|------|------|
+| id | string | ✓ | NextDesignのダイアグラムID |
+| name | string | ✓ | ダイアグラム名 |
+| description | string |  | 説明 |
+| customData | object |  | カスタムデータ |
+
+#### lifelines (ライフライン情報)
+
+| フィールド | 型 | 必須 | 説明 |
+|-----------|-----|------|------|
+| id | string | ✓ | NextDesignのライフラインID |
+| name | string | ✓ | ライフライン名 |
+| mermaidId | string | ✓ | Mermaid内で使用されるID |
+| order | number | ✓ | 表示順序 (0から開始) |
+| typeModel | string |  | マッピングされた型モデルのID |
+| customData | object |  | カスタムデータ |
+
+#### messages (メッセージ情報)
+
+| フィールド | 型 | 必須 | 説明 |
+|-----------|-----|------|------|
+| id | string | ✓ | NextDesignのメッセージID |
+| name | string | ✓ | メッセージテキスト |
+| sender | string | ✓ | 送信元ライフライン名 |
+| receiver | string | ✓ | 受信先ライフライン名 |
+| kind | string | ✓ | メッセージ種別 |
+| order | number | ✓ | 表示順序 (0から開始) |
+| customData | object |  | カスタムデータ |
+
+**kind の値:**
+- `sync` - 同期呼び出し
+- `async` - 非同期呼び出し
+- `reply` - 応答
+- `create` - オブジェクト生成
+- `destroy` - オブジェクト破棄
+
+#### fragments (フラグメント情報)
+
+| フィールド | 型 | 必須 | 説明 |
+|-----------|-----|------|------|
+| id | string | ✓ | NextDesignのフラグメントID |
+| type | string | ✓ | フラグメント種別 |
+| condition | string |  | ガード条件 |
+| operands | array |  | オペランド情報 |
+| customData | object |  | カスタムデータ |
+
+**type の値:**
+- `alt` - 条件分岐
+- `opt` - オプション
+- `loop` - 繰り返し
+- `par` - 並行処理
+
+### 完全な例
+
+```json
+{
+  "diagram": {
+    "id": "diagram-12345",
+    "name": "ログインシーケンス",
+    "description": "ユーザー認証フロー",
+    "customData": {
+      "author": "開発者A",
+      "version": "1.0",
+      "lastModified": "2025-01-15T10:30:00Z"
+    }
+  },
+  "lifelines": [
+    {
+      "id": "lifeline-001",
+      "name": "User",
+      "mermaidId": "User",
+      "order": 0,
+      "typeModel": "model-user-type",
+      "customData": {
+        "color": "#FF5733",
+        "stereotype": "actor"
+      }
+    },
+    {
+      "id": "lifeline-002",
+      "name": "AuthServer",
+      "mermaidId": "AuthServer",
+      "order": 1,
+      "typeModel": "model-auth-server",
+      "customData": {
+        "host": "auth.example.com",
+        "port": 443
+      }
+    }
+  ],
+  "messages": [
+    {
+      "id": "message-001",
+      "name": "ログイン要求",
+      "sender": "User",
+      "receiver": "AuthServer",
+      "kind": "sync",
+      "order": 0,
+      "customData": {
+        "timeout": 5000,
+        "retryCount": 3
+      }
+    },
+    {
+      "id": "message-002",
+      "name": "トークン",
+      "sender": "AuthServer",
+      "receiver": "User",
+      "kind": "reply",
+      "order": 1,
+      "customData": {
+        "tokenType": "JWT",
+        "expiresIn": 3600
+      }
+    }
+  ],
+  "fragments": [
+    {
+      "id": "fragment-001",
+      "type": "alt",
+      "condition": "認証成功",
+      "operands": [
+        {
+          "condition": "認証成功",
+          "messages": ["message-002"]
+        },
+        {
+          "condition": "認証失敗",
+          "messages": ["message-003"]
+        }
+      ],
+      "customData": {}
+    }
+  ]
+}
+```
+
+## サポートするMermaid構文
+
+### 現在サポート中
+
+#### 1. ライフライン定義
+
+**Participant (通常のライフライン)**
+```mermaid
+participant A
+participant B as "名前の表示"
+```
+
+**Actor (アクター型)**
+```mermaid
+actor User
+actor Admin as "管理者"
+```
+
+#### 2. メッセージ
+
+**同期メッセージ (実線矢印)**
+```mermaid
+A->>B: 同期呼び出し
+```
+
+**非同期メッセージ (破線矢印)**
+```mermaid
+A-)B: 非同期呼び出し
+```
+
+**応答メッセージ (破線戻り矢印)**
+```mermaid
+B-->>A: 応答
+```
+
+**Create (オブジェクト生成)**
+```mermaid
+A->>+B: 生成
+```
+
+**Destroy (オブジェクト破棄)**
+```mermaid
+A->>xB: 破棄
+```
+
+#### 3. アクティベーション (将来対応)
+
+**明示的なアクティベーション**
+```mermaid
+activate A
+A->>B: メッセージ
+deactivate A
+```
+
+**インラインアクティベーション**
+```mermaid
+A->>+B: 開始
+B-->>-A: 終了
+```
+
+### 将来サポート予定
+
+#### 1. 複合フラグメント
+
+**Alt (条件分岐)**
+```mermaid
+alt 条件1
+    A->>B: パターン1
+else 条件2
+    A->>C: パターン2
+end
+```
+
+**Opt (オプション)**
+```mermaid
+opt 条件
+    A->>B: オプション処理
+end
+```
+
+**Loop (繰り返し)**
+```mermaid
+loop 回数
+    A->>B: 繰り返し処理
+end
+```
+
+**Par (並行処理)**
+```mermaid
+par 並行1
+    A->>B: 処理1
+and 並行2
+    A->>C: 処理2
+end
+```
+
+#### 2. ノート
+
+**左側のノート**
+```mermaid
+Note left of A: 左側の注釈
+```
+
+**右側のノート**
+```mermaid
+Note right of A: 右側の注釈
+```
+
+**複数ライフラインにまたがるノート**
+```mermaid
+Note over A,B: 複数にまたがる注釈
+```
+
+#### 3. ネストフラグメント
+
+```mermaid
+alt 外側の条件
+    opt 内側の条件
+        A->>B: ネストされた処理
+    end
+else
+    loop 繰り返し
+        A->>C: 別のネスト
+    end
+end
+```
+
+**ネストレベル**: 最大5レベルまでサポート予定
+
+## 拡張可能性
+
+### カスタムメタデータの追加
+
+各エンティティに `customData` フィールドがあり、自由にデータを追加できます。
+
+#### 例1: バージョン管理情報
+
+```json
+{
+  "diagram": {
+    "customData": {
+      "version": "2.1.0",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "modifiedAt": "2025-01-15T10:30:00Z",
+      "author": "developer@example.com"
+    }
+  }
+}
+```
+
+#### 例2: スタイル情報
+
+```json
+{
+  "lifelines": [
+    {
+      "customData": {
+        "color": "#FF5733",
+        "backgroundColor": "#FFFFFF",
+        "fontSize": 12,
+        "iconUrl": "https://example.com/icon.png"
+      }
+    }
+  ]
+}
+```
+
+#### 例3: ビジネスロジック情報
+
+```json
+{
+  "messages": [
+    {
+      "customData": {
+        "timeout": 5000,
+        "retryPolicy": {
+          "maxRetries": 3,
+          "backoffMs": 1000
+        },
+        "authentication": "OAuth2",
+        "logging": true
+      }
+    }
+  ]
+}
+```
+
+### 新しいエンティティタイプの追加
+
+メタデータJSONのトップレベルに新しいエンティティを追加できます。
+
+```json
+{
   "diagram": { ... },
   "lifelines": [ ... ],
   "messages": [ ... ],
   "fragments": [ ... ],
-  "unsupportedElements": [ ... ]
+  "notes": [
+    {
+      "id": "note-001",
+      "text": "重要な注釈",
+      "position": "left",
+      "target": "User",
+      "customData": {}
+    }
+  ],
+  "executionSpecifications": [
+    {
+      "id": "exec-001",
+      "lifeline": "AuthServer",
+      "start": 10,
+      "end": 50,
+      "customData": {}
+    }
+  ]
 }
 ```
 
-### diagram オブジェクト
+## バージョニング
 
-シーケンス図全体の情報:
+### メタデータバージョン
+
+将来の互換性のため、メタデータにバージョン情報を追加することを推奨します。
 
 ```json
 {
-  "id": "next-design-guid",
-  "name": "シーケンス図名",
-  "description": "説明（オプショナル）",
-  "customFields": {
-    "key": "value"
-  }
+  "_version": "1.0.0",
+  "_schema": "https://example.com/schema/mermaid-metadata-v1.json",
+  "diagram": { ... }
 }
 ```
 
-| フィールド | 型 | 必須 | 説明 |
-|----------|---|------|------|
-| `id` | string | ✅ | Next Design の GUID |
-| `name` | string | ✅ | シーケンス図名 |
-| `description` | string | ❌ | 説明文 |
-| `customFields` | object | ❌ | カスタムフィールド（Phase 4+） |
+### 下位互換性
 
-### lifelines 配列
+- バージョン1.0.0: 現在の仕様
+- バージョン1.1.0: フラグメント、ノートのサポート追加
+- バージョン2.0.0: 破壊的変更 (フィールド名変更など)
 
-ライフライン要素の配列:
+## 検証
 
+### JSONスキーマ
+
+メタデータファイルの検証用JSONスキーマ (将来提供予定):
+```
+https://example.com/schema/mermaid-metadata-v1.json
+```
+
+### バリデーション項目
+
+1. **必須フィールドの存在**
+   - diagram.id, diagram.name
+   - lifelines[].id, lifelines[].name, lifelines[].mermaidId
+   - messages[].id, messages[].sender, messages[].receiver
+
+2. **参照整合性**
+   - messages[].sender/receiverがlifelines[].nameに存在
+   - fragments[].operands[].messagesがmessages[].idに存在
+
+3. **データ型**
+   - order: 非負整数
+   - id: 非空文字列
+   - messageSort: 有効な値
+
+4. **一意性**
+   - lifelines[].id: 一意
+   - messages[].id: 一意
+   - fragments[].id: 一意
+
+## ファイル例
+
+### 最小限の例
+
+**minimal.mmd:**
+```mermaid
+sequenceDiagram
+    participant A
+    participant B
+    A->>B: Hello
+```
+
+**minimal.meta.json:**
 ```json
 {
-  "mermaidId": "User",
-  "nextDesignId": "guid-001",
-  "name": "ユーザー",
-  "type": "Actor",
-  "order": 1,
-  "customFields": {}
+  "diagram": {
+    "id": "d1",
+    "name": "Minimal"
+  },
+  "lifelines": [
+    {"id": "l1", "name": "A", "mermaidId": "A", "order": 0},
+    {"id": "l2", "name": "B", "mermaidId": "B", "order": 1}
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "name": "Hello",
+      "sender": "A",
+      "receiver": "B",
+      "messageSort": "syncCall",
+      "order": 0
+    }
+  ]
 }
 ```
 
-| フィールド | 型 | 必須 | 説明 |
-|----------|---|------|------|
-| `mermaidId` | string | ✅ | Mermaid での識別子 |
-| `nextDesignId` | string | ✅ | Next Design の GUID |
-| `name` | string | ✅ | 表示名 |
-| `type` | string | ✅ | "Actor" または "Participant" |
-| `order` | number | ✅ | 表示順序（1から開始） |
-| `customFields` | object | ❌ | カスタムフィールド |
+### 完全な例
 
-### messages 配列
+[login_diagram.mmd](../examples/login_diagram.mmd) と [login_diagram.meta.json](../examples/login_diagram.meta.json) を参照してください。
 
-メッセージ要素の配列:
+## 関連ドキュメント
 
-```json
-{
-  "mermaidSourceId": "User",
-  "mermaidTargetId": "UI",
-  "nextDesignId": "guid-101",
-  "name": "ログイン",
-  "messageSort": "Synchronous",
-  "order": 1,
-  "customFields": {}
-}
-```
-
-| フィールド | 型 | 必須 | 説明 |
-|----------|---|------|------|
-| `mermaidSourceId` | string | ✅ | Source ライフラインの Mermaid ID |
-| `mermaidTargetId` | string | ✅ | Target ライフラインの Mermaid ID |
-| `nextDesignId` | string | ✅ | Next Design の GUID |
-| `name` | string | ✅ | メッセージ名 |
-| `messageSort` | string | ✅ | メッセージ種別（下表参照） |
-| `order` | number | ✅ | 表示順序（1から開始） |
-| `customFields` | object | ❌ | カスタムフィールド |
-
-#### messageSort 値
-
-| 値 | 説明 | Mermaid 構文 |
-|----|------|------------|
-| `Synchronous` | 同期メッセージ | `->>` |
-| `Asynchronous` | 非同期メッセージ | `-->>` |
-| `Return` | 戻りメッセージ | `-->>` または `--)` |
-| `Create` | 生成メッセージ | `->>+` |
-| `Destroy` | 破棄メッセージ | `->>x` |
-
-### fragments 配列 - Phase 4+
-
-フラグメント要素の配列:
-
-```json
-{
-  "nextDesignId": "guid-201",
-  "type": "alt",
-  "guard": "認証成功",
-  "order": 5,
-  "nestLevel": 0,
-  "customFields": {}
-}
-```
-
-| フィールド | 型 | 必須 | 説明 |
-|----------|---|------|------|
-| `nextDesignId` | string | ✅ | Next Design の GUID |
-| `type` | string | ✅ | "alt", "loop", "opt", "par" |
-| `guard` | string | ✅ | ガード条件 |
-| `order` | number | ✅ | 表示順序 |
-| `nestLevel` | number | ✅ | ネストレベル（0から開始） |
-| `customFields` | object | ❌ | カスタムフィールド |
-
-### unsupportedElements 配列
-
-未サポート要素の警告:
-
-```json
-[
-  "ネストフラグメント（レベル6以上）",
-  "スタイリング: rect rgb(200, 220, 100)"
-]
-```
-
-## バージョン管理
-
-### version フィールド
-
-メタデータ形式のバージョン:
-
-```json
-{
-  "version": "1.0"
-}
-```
-
-現在サポートされるバージョン:
-- `1.0` - 初期バージョン
-
-将来の互換性:
-- メジャーバージョン変更（2.0等）: 破壊的変更
-- マイナーバージョン変更（1.1等）: 下位互換性あり
-
-## ID 生成規則
-
-### プレビュー方法
-
-エクスポートされた `.mmd` ファイルは以下の方法で即座にプレビュー可能:
-
-1. **VS Code**: Markdown Preview Mermaid Support 拡張機能をインストール
-2. **GitHub/GitLab**: リポジトリにプッシュすると自動レンダリング
-3. **Mermaid Live Editor**: https://mermaid.live/ にコピー&ペースト
-4. **Obsidian/Notion**: 直接貼り付けでプレビュー
-
-### Mermaid ID
-
-Mermaid ファイル内で使用される識別子:
-
-#### 生成ルール
-
-1. Next Design の名前をベースに生成
-2. スペースとハイフン (`-`) をアンダースコア (`_`) に置換
-3. 英数字とアンダースコアのみを残す
-4. 先頭が数字の場合は `L` を接頭辞として追加
-
-#### 例
-
-| Next Design 名 | Mermaid ID |
-|---------------|-----------|
-| `User` | `User` |
-| `ユーザー UI` | `UI` |
-| `認証サービス` | `` |
-| `1st Service` | `L1st_Service` |
-
-### Next Design GUID
-
-Next Design の内部 ID:
-
-- 形式: GUID (UUID)
-- 例: `a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6`
-- 生成タイミング:
-  - エクスポート時: 既存の GUID を使用
-  - インポート時: メタデータがあれば既存 GUID、なければ新規生成
-
-## エンコーディング
-
-### ファイル文字コード
-
-すべてのファイルは **UTF-8** エンコーディングを使用:
-
-- Mermaid ファイル (`.mmd`): UTF-8
-- メタデータ JSON (`.meta.json`): UTF-8
-
-### 改行コード
-
-- **推奨**: LF (`\n`)
-- **サポート**: CRLF (`\r\n`)
-
-## 検証ルール
-
-### メタデータ検証
-
-#### 必須フィールド
-
-すべての必須フィールドが存在し、有効な値であること:
-
-- `version`: 有効なバージョン文字列
-- `diagram.id`: 空でない文字列
-- `diagram.name`: 空でない文字列
-- `lifelines[].mermaidId`: 一意の識別子
-- `lifelines[].nextDesignId`: 一意の GUID
-
-#### 参照整合性
-
-- `messages[].mermaidSourceId` は `lifelines[].mermaidId` に存在すること
-- `messages[].mermaidTargetId` は `lifelines[].mermaidId` に存在すること
-
-### Mermaid 構文検証
-
-Phase 5 で実装予定:
-
-- 構文エラーの検出
-- 未定義ライフラインの参照検出
-- ネストフラグメントの深さ制限チェック（最大5レベル）
-
-## 拡張性
-
-### カスタムフィールド
-
-各要素に `customFields` オブジェクトを追加可能:
-
-```json
-{
-  "customFields": {
-    "priority": "high",
-    "category": "authentication",
-    "tags": ["security", "login"]
-  }
-}
-```
-
-- 任意のJSON値をサポート
-- Next Design 固有のプロパティを保存
-- エクスポート/インポート時に保持
-
-### 将来の拡張
-
-Phase 4+ で追加予定:
-
-- スタイリング情報
-- アノテーション
-- リンク情報
-- カスタムプロパティのマッピング
+- [ユーザーガイド](user-guide.md)
+- [開発者ガイド](developer-guide.md)
+- [トラブルシューティング](troubleshooting.md)
+- [Mermaid公式ドキュメント](https://mermaid.js.org/syntax/sequenceDiagram.html)

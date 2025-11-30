@@ -15,6 +15,22 @@ indent_style = space
 indent_size = 4
 end_of_line = crlf
 
+# Code style rules
+csharp_prefer_braces = true:suggestion
+csharp_prefer_simple_using_statement = true:suggestion
+csharp_style_namespace_declarations = file_scoped:suggestion
+
+# Naming conventions
+dotnet_naming_rule.private_members_with_underscore.symbols = private_fields
+dotnet_naming_rule.private_members_with_underscore.style = prefix_underscore
+dotnet_naming_rule.private_members_with_underscore.severity = suggestion
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.prefix_underscore.capitalization = camel_case
+dotnet_naming_style.prefix_underscore.required_prefix = _
+
 # JSON files
 [*.json]
 indent_style = space
@@ -23,8 +39,10 @@ indent_size = 2
 # Markdown files
 [*.md]
 trim_trailing_whitespace = false
-
-# Mermaid files
-[*.mmd]
 indent_style = space
-indent_size = 4
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2

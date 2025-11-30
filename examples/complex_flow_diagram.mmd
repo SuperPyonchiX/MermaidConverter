@@ -1,0 +1,41 @@
+sequenceDiagram
+    participant Client
+    participant Gateway
+    participant Service
+    participant Cache
+    participant DB
+    
+    Note over Client,DB: 複雑なフローの例
+    
+    Client->>+Gateway: リクエスト送信
+    
+    Gateway->>+Service: 処理依頼
+    
+    loop キャッシュチェック
+        Service->>Cache: キャッシュ確認
+        Cache-->>Service: キャッシュ結果
+    end
+    
+    alt キャッシュヒット
+        Note right of Service: キャッシュから取得
+        Service-->>Gateway: キャッシュデータ
+    else キャッシュミス
+        Note right of Service: DBから取得
+        Service->>+DB: データ取得
+        DB-->>-Service: データ
+        
+        par 並行処理
+            Service->>Cache: キャッシュ更新
+        and
+            Service->>DB: ログ記録
+        end
+        
+        Service-->>Gateway: DBデータ
+    end
+    
+    Gateway-->>-Client: レスポンス
+    
+    opt エラー処理
+        Client->>Gateway: エラー通知
+        Gateway->>Service: エラーログ
+    end

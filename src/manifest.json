@@ -1,0 +1,70 @@
+{
+  "name": "MermaidConverter",
+  "version": "1.0.0",
+  "description": "NextDesignシーケンス図とMermaid形式の双方向変換",
+  "author": "NextDesign Extension Developer",
+  "main": "main.cs",
+  "lifecycle": "application",
+  "extensionPoints": {
+    "ribbon": {
+      "tabs": [
+        {
+          "id": "MermaidConverter.MainTab",
+          "label": "Mermaid変換",
+          "groups": [
+            {
+              "id": "MermaidConverter.ConvertGroup",
+              "label": "変換",
+              "controls": [
+                {
+                  "id": "MermaidConverter.ExportButton",
+                  "type": "Button",
+                  "label": "Mermaidへエクスポート",
+                  "tooltip": "選択したシーケンス図をMermaid形式にエクスポートします",
+                  "command": "MermaidConverter.Export"
+                },
+                {
+                  "id": "MermaidConverter.ImportButton",
+                  "type": "Button",
+                  "label": "Mermaidからインポート",
+                  "tooltip": "Mermaid形式ファイルをNextDesignにインポートします",
+                  "command": "MermaidConverter.Import"
+                }
+              ]
+            },
+            {
+              "id": "MermaidConverter.UtilityGroup",
+              "label": "ユーティリティ",
+              "controls": [
+                {
+                  "id": "MermaidConverter.ValidateButton",
+                  "type": "Button",
+                  "label": "Mermaid検証",
+                  "tooltip": "Mermaidファイルの構文を検証します",
+                  "command": "MermaidConverter.Validate"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "commands": [
+      {
+        "id": "MermaidConverter.Export",
+        "name": "Mermaidへエクスポート",
+        "execFunc": "ExportToMermaid"
+      },
+      {
+        "id": "MermaidConverter.Import",
+        "name": "Mermaidからインポート",
+        "execFunc": "ImportFromMermaid"
+      },
+      {
+        "id": "MermaidConverter.Validate",
+        "name": "Mermaid検証",
+        "execFunc": "ValidateMermaid"
+      }
+    ]
+  }
+}

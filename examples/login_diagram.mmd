@@ -1,14 +1,26 @@
-```mermaid
 sequenceDiagram
     participant User
     participant UI
-    participant Auth
-    participant DB
+    participant AuthServer
+    participant Database
     
-    User->>UI: ログイン
-    UI->>+Auth: 認証リクエスト
-    Auth->>+DB: ユーザー情報取得
-    DB-->>-Auth: ユーザーデータ
-    Auth-->>-UI: 認証結果
-    UI->>User: ダッシュボード表示
-```
+    User->>UI: ログイン要求
+    activate UI
+    UI->>AuthServer: 認証リクエスト
+    activate AuthServer
+    
+    AuthServer->>Database: ユーザー情報取得
+    activate Database
+    Database-->>AuthServer: ユーザー情報
+    deactivate Database
+    
+    alt 認証成功
+        AuthServer-->>UI: トークン
+        UI-->>User: ログイン成功
+    else 認証失敗
+        AuthServer-->>UI: エラー
+        UI-->>User: ログイン失敗
+    end
+    
+    deactivate AuthServer
+    deactivate UI

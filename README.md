@@ -1,225 +1,145 @@
 # NextDesign Mermaid Converter
 
-Next Design シーケンス図と Mermaid 形式の完全双方向変換を実現する Next Design エクステンションです。
+NextDesignのシーケンス図とMermaid形式テキストの完全な双方向変換を実現するエクステンションです。
 
-## 概要
+## 🎯 機能
 
-このエクステンションは、Next Design のシーケンス図を Mermaid 形式にエクスポートしたり、Mermaid 形式のシーケンス図を Next Design にインポートする機能を提供します。メタデータファイルを使用することで、要素のIDや順序、カスタムフィールドを完全に保持した双方向変換が可能です。
+### エクスポート機能
+- NextDesignのシーケンス図をMermaid形式(.mmd)にエクスポート
+- ライフライン、メッセージ、フラグメント、アクティベーション、ノートをサポート
+- NextDesign固有情報をメタデータファイル(.meta.json)として保存
 
-## 📚 ドキュメント
+### インポート機能
+- Mermaid形式ファイルをNextDesignのシーケンス図としてインポート
+- メタデータファイルがあればID・順序を完全復元
+- メタデータなしでも新規作成可能
 
-- **[ユーザーガイド](docs/user-guide.md)** - インストール、使用方法、トラブルシューティング
-- **[開発者ガイド](docs/developer-guide.md)** - アーキテクチャ、API、実装ガイド
-- **[ファイル形式仕様](docs/file-format.md)** - Mermaid とメタデータの詳細仕様
-- **[トラブルシューティング](docs/troubleshooting.md)** - よくある問題と解決方法
+### サポート要素
 
-## 実装状況
+#### 基本要素
+- ライフライン (participant/actor)
+- 同期メッセージ (`->>`)
+- 非同期メッセージ (`--)`)
+- 応答メッセージ (`-->>`)
+- Create/Destroyメッセージ
 
-### Phase 1: プロジェクト基盤 ✅ 完了
-- ディレクトリ構造、README、ライセンス、エディタ設定
+#### 高度な要素
+- 複合フラグメント (alt/opt/loop/par)
+- ネストフラグメント (最大5レベル)
+- アクティベーション (`+`/`-`)
+- ノート (`Note left of`/`Note right of`/`Note over`)
 
-### Phase 2: コアフレームワーク ✅ 完了
-- manifest.json、リボンタブ、コマンド定義、エントリーポイント
+## 📦 インストール
 
-### Phase 3: 基本エクスポート ✅ 完了
-- ライフライン（participant）のエクスポート
-- メッセージ（同期 `->>）のエクスポート
-- メタデータ JSON 生成
-- ファイル出力（現在: 固定パス `C:\temp\`）
+1. 本リポジトリをダウンロードまたはクローン
+2. `src`フォルダをNextDesignの拡張機能フォルダにコピー
+   - 通常: `%USERPROFILE%\Documents\NextDesign\Extensions\`
+3. NextDesignを再起動
+4. リボンタブに「Mermaid変換」が表示されることを確認
 
-### Phase 4: 高度なエクスポート ⚠️ 未実装
-- [ ] フラグメント（alt/loop/opt/par）
-- [ ] アクティベーション（+/-）
-- [ ] ノート（Note left/right/over）
-- [ ] アクター（actor）
-- [ ] 非同期メッセージ（-->>）
-- [ ] ファイルダイアログ実装
+## 🚀 使用方法
 
-### Phase 5: インポート完全実装 ⚠️ 未実装
-- [ ] Mermaid 構文完全パース
-- [ ] メタデータ自動検出
-- [ ] Next Design モデル生成
-- [ ] トランザクション管理
-- [ ] エラーハンドリング
+### エクスポート
 
-### Phase 6: 最終仕上げ ✅ 部分完了
-- [x] ユーザーガイド
-- [x] 開発者ガイド
-- [x] ファイル形式仕様
-- [x] トラブルシューティング
-- [x] サンプルファイル（login_diagram、ecommerce_flow）
-- [ ] 複雑なサンプル（ネストフラグメント）
+1. NextDesignでシーケンス図を選択
+2. リボンタブ「Mermaid変換」→「Mermaidへエクスポート」ボタンをクリック
+3. 保存先とファイル名を指定
+4. 以下のファイルが生成されます:
+   - `{name}.mmd` - Mermaid形式のシーケンス図
+   - `{name}.meta.json` - NextDesign固有情報のメタデータ
 
-## 主な機能
+### インポート
 
-### ✅ エクスポート機能（Phase 3 完了）
-- **基本要素**: ライフライン（participant）、メッセージ（同期 `->>`)
-- **メタデータ保存**: 要素ID、順序を JSON ファイルに自動保存
-- **エラーハンドリング**: 詳細ログ出力（Output ウィンドウ）
+1. NextDesignでプロジェクトを開く
+2. リボンタブ「Mermaid変換」→「Mermaidからインポート」ボタンをクリック
+3. `.mmd`ファイルを選択
+4. 同じフォルダに`.meta.json`があれば自動的に読み込まれます
+5. シーケンス図がNextDesignに作成されます
 
-### ⚠️ 高度なエクスポート（Phase 4 予定）
-- フラグメント（alt/loop/opt/par）、アクティベーション（+/-）、ノート
-- アクター（actor）、非同期メッセージ（-->>）
-- ファイルダイアログによる保存先選択
-
-### ⚠️ インポート機能（Phase 5 予定）
-- **完全パース**: Mermaid 構文の包括的な解析（ネストフラグメント対応）
-- **メタデータ対応**: 既存要素のIDを維持した更新
-- **新規ID割り当て**: メタデータなしでも自動的に新規要素を生成
-- **トランザクション管理**: エラー時の自動ロールバック
-
-## インストール
-
-1. 最新の [Releases](../../releases) から `MermaidConverter.zip` をダウンロード
-2. ZIP ファイルを任意のフォルダに解凍
-3. Next Design を起動し、「ツール」→「オプション」→「エクステンション」を開く
-4. 「追加」ボタンをクリックし、解凍したフォルダを選択
-5. Next Design を再起動
-
-## 使用方法
-
-### エクスポート（Phase 3 実装済み）
-
-1. Next Design でシーケンス図を選択
-2. リボンタブ「Mermaid変換」→「Mermaidへエクスポート」をクリック
-3. エクスポート完了後、以下のファイルが `C:\temp\` に生成されます：
-   - `exported_diagram.mmd` - Mermaid 形式のシーケンス図
-   - `exported_diagram.meta.json` - メタデータファイル（ID、順序）
-
-**注意**: Phase 3 では固定パス `C:\temp\` に出力されます。Phase 4 でファイルダイアログを実装予定です。
-
-### インポート（Phase 5 実装予定）
-
-インポート機能は Phase 5 で実装予定です。
-
-詳細は **[ユーザーガイド](docs/user-guide.md)** を参照してください。
-
-## ファイル形式
-
-### Mermaid ファイル（.mmd）
-
-エクスポートされる `.mmd` ファイルは、GitHub や VS Code などの Markdown 対応エディタで即座にプレビューできるよう、Mermaid コードブロックで囲まれています:
+## 📝 Mermaid構文例
 
 ```mermaid
 sequenceDiagram
     participant User
-    actor Admin
-    User->>UI: ログイン
-    UI->>+Auth: 認証
-    Auth-->>-UI: 結果
+    participant UI
+    participant AuthServer
+    
+    User->>UI: ログイン要求
+    activate UI
+    UI->>AuthServer: 認証リクエスト
+    activate AuthServer
+    
     alt 認証成功
-        UI->>User: ダッシュボード表示
+        AuthServer-->>UI: トークン
+        UI-->>User: ログイン成功
     else 認証失敗
-        UI->>User: エラー表示
+        AuthServer-->>UI: エラー
+        UI-->>User: ログイン失敗
     end
+    
+    deactivate AuthServer
+    deactivate UI
 ```
 
-### メタデータファイル（.meta.json）
+## 📚 ドキュメント
 
-```json
-{
-  "version": "1.0",
-  "diagram": {
-    "id": "diagram_guid",
-    "name": "Login Sequence",
-    "description": "ユーザーログインフロー"
-  },
-  "lifelines": [
-    {
-      "mermaidId": "User",
-      "nextDesignId": "lifeline_guid_001",
-      "name": "ユーザー",
-      "type": "Participant",
-      "order": 1
-    }
-  ],
-  "messages": [
-    {
-      "mermaidSourceId": "User",
-      "mermaidTargetId": "UI",
-      "nextDesignId": "message_guid_001",
-      "name": "ログイン",
-      "messageSort": "Synchronous",
-      "order": 1
-    }
-  ]
-}
+- [ユーザーガイド](docs/user-guide.md) - 詳細な使用方法
+- [開発者ガイド](docs/developer-guide.md) - アーキテクチャと拡張方法
+- [ファイル形式仕様](docs/file-format.md) - メタデータJSON仕様
+- [トラブルシューティング](docs/troubleshooting.md) - よくある問題と解決方法
+
+## 🔧 技術仕様
+
+- **対応バージョン**: Next Design 3.0以降
+- **言語**: C#スクリプト
+- **フレームワーク**: Next Design Extension API
+- **メタデータ形式**: JSON
+
+### 必要なライブラリ
+
+コードは以下の.NETライブラリを使用します:
+
+- `System.*` - 基本ライブラリ (常に利用可能)
+- `System.Text.Json` - JSON処理 (.NET Core 3.0以降)
+  - ⚠️ .NET Framework環境の場合は`Newtonsoft.Json`の使用を推奨
+- `System.Text.RegularExpressions` - Mermaid構文解析用
+- `System.IO` - ファイル入出力
+
+**注意**: Next Designのスクリプト実行環境が.NET Frameworkベースの場合、`System.Text.Json`が利用できない可能性があります。その場合は以下の対応が必要です:
+
+1. `Newtonsoft.Json` (JSON.NET)を使用
+2. コード内の条件付きコンパイルで簡易JSON処理を使用 (現在実装済み)
+
+## 📂 プロジェクト構造
+
+```
+MermaidConverter/
+├── src/
+│   ├── manifest.json       # 拡張機能定義
+│   ├── main.cs             # メイン実装
+│   └── resources/          # アイコン等のリソース
+├── examples/               # サンプルファイル
+├── docs/                   # ドキュメント
+└── README.md
 ```
 
-詳細は **[ファイル形式仕様](docs/file-format.md)** を参照してください。
+## 🤝 貢献
 
-## サンプル
+バグ報告や機能リクエストは、GitHubのIssuesでお願いします。
 
-- **[examples/login_diagram.mmd](examples/login_diagram.mmd)** - シンプルなログインフロー（4ライフライン、6メッセージ）
-- **[examples/ecommerce_flow_diagram.mmd](examples/ecommerce_flow_diagram.mmd)** - 複雑なECサイトフロー（5ライフライン、26メッセージ）
+## 📄 ライセンス
 
-## サポート要素
+MIT License
 
-### Phase 3 完了
+## 🙏 謝辞
 
-| 要素 | Next Design | Mermaid | サポート状況 |
-|------|------------|---------|------------|
-| ライフライン | ILifeline | participant | ✅ 完全サポート |
-| 同期メッセージ | IMessage (Synchronous) | ->> | ✅ 完全サポート |
-| メタデータ | - | .meta.json | ✅ 完全サポート |
+- [Next Design](https://www.nextdesign.app/) - DENSO CREATE
+- [Mermaid](https://mermaid.js.org/) - Mermaid Chart Community
 
-### Phase 4 実装予定
+## 📮 サポート
 
-| 要素 | Next Design | Mermaid | サポート状況 |
-|------|------------|---------|------------|
-| アクター | ILifeline (Actor) | actor | ⚠️ Phase 4 |
-| 非同期メッセージ | IMessage (Asynchronous) | -->> | ⚠️ Phase 4 |
-| 戻りメッセージ | IMessage (Return) | --) | ⚠️ Phase 4 |
-| アクティベーション | - | +/- | ⚠️ Phase 4 |
-| フラグメント | IInteractionFragment | alt/loop/opt/par | ⚠️ Phase 4 |
-| ノート | - | Note | ⚠️ Phase 4 |
+質問や問題がある場合は、以下をご確認ください:
 
-### 未サポート
-
-| 要素 | Next Design | Mermaid | サポート状況 |
-|------|------------|---------|------------|
-| スタイリング | - | rect/背景色 | ❌ 未サポート |
-
-## トラブルシューティング
-
-詳細は **[トラブルシューティング](docs/troubleshooting.md)** を参照してください。
-
-### よくある問題
-
-**Q: リボンタブが表示されません**
-- A: Next Design を再起動してください。それでも表示されない場合は、エクステンション設定を確認してください。
-
-**Q: 「モデルが選択されていません」エラー**
-- A: プロジェクトビューでシーケンス図を選択してください。
-
-**Q: ファイルが出力されません**
-- A: `C:\temp\` フォルダを作成してください。Phase 4 でファイルダイアログを実装予定です。
-
-**Q: ライフラインが0個**
-- A: 出力ウィンドウ（表示→出力）でエラーログを確認してください。Next Design のメタモデル定義が想定と異なる可能性があります。
-
-## ライセンス
-
-MIT License - 詳細は [LICENSE](LICENSE) を参照してください。
-
-## バージョン履歴
-
-### v0.3.0（Phase 3 完了 - 現在）
-- 基本エクスポート機能（ライフライン + 同期メッセージ）
-- メタデータ JSON 生成
-- サンプルファイル（login_diagram、ecommerce_flow）
-- 完全ドキュメント（ユーザーガイド、開発者ガイド、ファイル形式仕様、トラブルシューティング）
-
-### v1.0.0（予定 - Phase 6 完了後）
-- エクスポート機能（基本要素 + 高度な要素）
-- インポート機能（完全パース + メタデータ対応）
-- ファイルダイアログ実装
-- 複雑なサンプル追加
-
-## 作成者
-
-NextDesign Mermaid Converter Development Team
-
-## サポート
-
-問題や要望がある場合は、[Issues](../../issues) でお知らせください。
+1. [トラブルシューティングガイド](docs/troubleshooting.md)
+2. [Next Design公式ドキュメント](https://docs.nextdesign.app/)
+3. GitHubのIssues

@@ -1,3 +1,0 @@
-# Placeholder for import icon (32x32 PNG)
-# Replace this file with actual icon image
-# Icon should represent: Import/Upload/Load action

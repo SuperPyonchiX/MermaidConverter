@@ -1,0 +1,145 @@
+{
+  "diagram": {
+    "id": "example-complex-001",
+    "name": "複雑なフローシーケンス図",
+    "description": "フラグメント、ノート、アクティベーションを含む複雑なシーケンス図"
+  },
+  "lifelines": [
+    {
+      "id": "lifeline-101",
+      "name": "Client",
+      "mermaidId": "Client",
+      "order": 0
+    },
+    {
+      "id": "lifeline-102",
+      "name": "Gateway",
+      "mermaidId": "Gateway",
+      "order": 1
+    },
+    {
+      "id": "lifeline-103",
+      "name": "Service",
+      "mermaidId": "Service",
+      "order": 2
+    },
+    {
+      "id": "lifeline-104",
+      "name": "Cache",
+      "mermaidId": "Cache",
+      "order": 3
+    },
+    {
+      "id": "lifeline-105",
+      "name": "DB",
+      "mermaidId": "DB",
+      "order": 4
+    }
+  ],
+  "messages": [
+    {
+      "id": "message-101",
+      "name": "リクエスト送信",
+      "sender": "Client",
+      "receiver": "Gateway",
+      "kind": "sync",
+      "order": 0
+    },
+    {
+      "id": "message-102",
+      "name": "処理依頼",
+      "sender": "Gateway",
+      "receiver": "Service",
+      "kind": "sync",
+      "order": 1
+    },
+    {
+      "id": "message-103",
+      "name": "キャッシュ確認",
+      "sender": "Service",
+      "receiver": "Cache",
+      "kind": "sync",
+      "order": 2
+    },
+    {
+      "id": "message-104",
+      "name": "キャッシュ結果",
+      "sender": "Cache",
+      "receiver": "Service",
+      "kind": "reply",
+      "order": 3
+    },
+    {
+      "id": "message-105",
+      "name": "キャッシュデータ",
+      "sender": "Service",
+      "receiver": "Gateway",
+      "kind": "reply",
+      "order": 4
+    },
+    {
+      "id": "message-106",
+      "name": "データ取得",
+      "sender": "Service",
+      "receiver": "DB",
+      "kind": "sync",
+      "order": 5
+    },
+    {
+      "id": "message-107",
+      "name": "データ",
+      "sender": "DB",
+      "receiver": "Service",
+      "kind": "reply",
+      "order": 6
+    },
+    {
+      "id": "message-108",
+      "name": "キャッシュ更新",
+      "sender": "Service",
+      "receiver": "Cache",
+      "kind": "async",
+      "order": 7
+    },
+    {
+      "id": "message-109",
+      "name": "ログ記録",
+      "sender": "Service",
+      "receiver": "DB",
+      "kind": "async",
+      "order": 8
+    },
+    {
+      "id": "message-110",
+      "name": "DBデータ",
+      "sender": "Service",
+      "receiver": "Gateway",
+      "kind": "reply",
+      "order": 9
+    },
+    {
+      "id": "message-111",
+      "name": "レスポンス",
+      "sender": "Gateway",
+      "receiver": "Client",
+      "kind": "reply",
+      "order": 10
+    },
+    {
+      "id": "message-112",
+      "name": "エラー通知",
+      "sender": "Client",
+      "receiver": "Gateway",
+      "kind": "sync",
+      "order": 11
+    },
+    {
+      "id": "message-113",
+      "name": "エラーログ",
+      "sender": "Gateway",
+      "receiver": "Service",
+      "kind": "async",
+      "order": 12
+    }
+  ]
+}
